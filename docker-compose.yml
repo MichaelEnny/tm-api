@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: taskflow-db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: taskflow
+    volumes:
+      - mongodb_data:/data/db
+
+  api:
+    build: .
+    container_name: taskflow-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongodb:27017/taskflow
+      - JWT_SECRET=your_secret_here
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+volumes:
+  mongodb_data:
+
+# TODO: Add Redis service for caching
+# TODO: Add nginx for reverse proxy
+# TODO: Add health checks
+# TODO: Configure proper environment variables
